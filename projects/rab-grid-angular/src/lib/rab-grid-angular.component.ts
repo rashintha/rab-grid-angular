@@ -1,12 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 
 @Component({
-  selector: 'lib-rab-grid-angular',
-  template: `
-    <p>
-      rab-grid-angular works!
-    </p>
-  `,
+  selector: 'rab-grid',
+  template: './rab-grid-angular.component.html',
   styles: [
   ]
 })
