@@ -1,0 +1,368 @@
+.table-sort{
+  cursor: pointer;
+  text-decoration: none !important;
+  color: #1BB981 !important;
+}
+
+.grid-color {
+  color: var(--mont-primaryColor) !important;
+}
+
+.grid-links{
+  cursor: pointer;
+}
+
+.font-weight-bold {
+  font-weight: bold;
+}
+
+.button-border {
+  border: none;
+  background-color: transparent;
+}
+
+td {
+  vertical-align: middle;
+  padding: .75rem;
+  border-top: 1px solid #dee2e6 !important;
+  border-bottom: none !important;
+}
+
+th {
+  padding: .75rem;
+  border-bottom: 2px solid #dee2e6 !important;
+}
+
+.c-dialog{
+  position: fixed;
+  margin-top: 15px;
+  z-index: 1000;
+}
+
+.c-dialog-bubble{
+  box-shadow: 0px 0px 20px;
+  width: max-content;
+  height: auto;
+  background: #fff;
+  position: relative;
+  -moz-border-radius: 10px;
+  -webkit-border-radius: 10px;
+  border-radius: 10px;
+}
+
+.c-dialog-bubble:before{ 
+  content: "";
+  position: absolute;
+  top: -9px;
+  width: 0;
+  height: 0;
+  border-left: 10px solid transparent;
+  border-bottom: 17px solid #fff;
+  border-right: 10px solid transparent;
+}
+
+.total{
+  align-self: center;
+  position: absolute;
+  left: calc(15px + 0.75rem);
+  color: #A61E2D;
+}
+
+.total-div{
+  color: #A61E2D;
+}
+
+.show-count{
+  display: inline-block;
+  width: unset;
+}
+
+@keyframes loading {
+  0% { transform: rotate(0deg) }
+  50% { transform: rotate(180deg) }
+  100% { transform: rotate(360deg) }
+}
+
+.loading div {
+  position: absolute;
+  animation: loading 1s linear infinite;
+  width: 40px;
+  height: 40px;
+  top: 5px;
+  left: 5px;
+  border-radius: 50%;
+  box-shadow: 0 1px 0 0 #e15b64;
+  transform-origin: 20px 20px;
+}
+
+.loading-spinner-eclipse {
+  width: 50px;
+  height: 50px;
+  display: inline-block;
+  overflow: hidden;
+  background: transparent;
+}
+
+.loading {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  transform: translateZ(0) scale(1);
+  backface-visibility: hidden;
+  transform-origin: 0 0;
+}
+
+.center-loader{
+  position: fixed;
+  top: 5em;
+  height: 100%;
+  width: 100vw !important;
+  background-color: #ffffffef;
+  display: flex;
+  left: 0;
+  z-index: 1000;
+  flex-direction: column;
+}
+
+.center-loader .spinner-container{
+  margin-top: 20%;
+}
+
+.center-loader .loading-spinner-eclipse{
+  background-color: transparent !important;
+}
+
+.max-exceed-notice{
+  right: 0;
+}
+
+.rabgrid-dropdown i{
+  color: #fff;
+}
+
+.hidden{
+  display: none;
+}
+
+/* 
+ * Device = Laptops, Desktops (Full HD)
+ * Screen = 1367px or higher resolution desktops
+ */
+
+ @media (min-width: 1367px) {
+  .c-dialog{
+    margin-left: -14.5em;
+    margin-top: 2em;
+  }
+
+  .c-dialog-bubble:before{ 
+    left: 14.25em;
+  }
+
+  .c-dialog-bubble.single:before{ 
+    left: 12.3em;
+  }
+
+  .form-control, .form-select {
+    min-width: 200px;
+  }
+}
+
+
+/* 
+* Device = Laptops, Desktops (HD)
+* Screen = 1281px or higher resolution desktops
+*/
+
+@media (min-width: 1281px) and (max-width: 1366px) {
+  .c-dialog{
+    margin-left: -12em;
+  }
+
+  .c-dialog-bubble:before{ 
+    left: 14.25em;
+  }
+
+  .c-dialog-bubble.single:before{ 
+    left: 12.35em;
+  }
+
+  .form-control, .form-select {
+    min-width: 200px;
+  }
+}
+
+/* 
+* Device = Laptops, Desktops
+* Screen = 1025px to 1280px
+*/
+
+@media (min-width: 1025px) and (max-width: 1280px) {
+  .c-dialog{
+    margin-left: -12em;
+  }
+
+  .c-dialog-bubble:before{ 
+    left: 14.25em;
+  }
+
+  .c-dialog-bubble.single:before{ 
+    left: 12.35em;
+  }
+
+  .form-control, .form-select {
+    min-width: 200px;
+  }
+}
+
+/* 
+* Device = iPad Pro (Portrait)
+* Screen = 1024px to 1366px
+*/
+@media (min-width: 1024px) and (max-height: 1366px) and (orientation: portrait) {
+  .c-dialog{
+    margin-left: -13em;
+  }
+
+  .c-dialog-bubble:before{ 
+    left: 15.25em;
+  }
+
+  .c-dialog-bubble.single:before{ 
+    left: 13.35em;
+  }
+
+  .form-control, .form-select {
+    min-width: 200px;
+  }
+}
+
+/* 
+* Device = Tablets, iPads (Portrait)
+* Screen = 768px to 1024px
+*/
+
+@media (min-width: 768px) and (max-width: 1024px) and (orientation: portrait) {
+  @media (min-width: 991px) {
+    .c-dialog{
+      margin-left: -13em;
+    }
+  
+    .c-dialog-bubble:before{ 
+      left: 15.25em;
+    }
+
+    .c-dialog-bubble.single:before{ 
+      left: 13.35em;
+    }
+  }
+
+  @media (max-width: 990px) {
+    .c-dialog{
+      margin-left: -14em;
+    }
+  
+    .c-dialog-bubble:before{ 
+      left: 16.25em;
+    }
+
+    .c-dialog-bubble.single:before{ 
+      left: 14.35em;
+    }
+  }
+}
+
+/* 
+* Device = Tablets, iPads (Landscape)
+* Screen = 768px to 1024px
+*/
+
+@media (min-width: 768px) and (max-width: 1024px) and (orientation: landscape) {
+  @media (min-width: 991px) {
+    .c-dialog{
+      margin-left: -13em;
+    }
+  
+    .c-dialog-bubble:before{ 
+      left: 15.25em;
+    }
+
+    .c-dialog-bubble.single:before{ 
+      left: 13.35em;
+    }
+  }
+
+  @media (max-width: 990px) {
+    .c-dialog{
+      margin-left: -14em;
+    }
+  
+    .c-dialog-bubble:before{ 
+      left: 16.25em;
+    }
+
+    .c-dialog-bubble.single:before{ 
+      left: 14.35em;
+    }
+  }
+}
+
+/* 
+* Device = Low Resolution Tablets, Mobiles (Landscape)
+* Screen = 481px to 767px
+*/
+
+@media (min-width: 481px) and (max-width: 767px) {
+  .c-dialog{
+    right: 3em;
+  }
+
+  .c-dialog-bubble:before{ 
+    left: 14.5em;
+  }
+
+  .total{
+    position: unset;
+    margin-bottom: 0.5rem;
+  }
+
+  .mobile-hide{
+    display: none;
+  }
+
+  .max-exceed-notice {
+    margin-left: -30vw;
+  }
+}
+
+/* 
+* Device = Most of the Smartphones Mobiles (Portrait)
+* Screen = 320px to 479px
+*/
+
+@media (min-width: 320px) and (max-width: 480px) {
+  .c-dialog{
+    left: 15px;
+  }
+
+  .c-dialog-bubble:before{ 
+    left: 15.25em;
+  }
+
+  .total{
+    position: unset;
+    margin-bottom: 0.5rem;
+  }
+
+  .mobile-hide{
+    display: none;
+  }
+
+  .pagination{
+    justify-content: flex-start !important;
+  }
+
+  .max-exceed-notice {
+    margin-left: -50vw;
+  }
+}

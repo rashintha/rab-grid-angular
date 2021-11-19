@@ -1,6 +1,21 @@
 {
   "name": "rab-grid-angular",
-  "version": "0.0.1",
+  "version": "1.0.0-beta7",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rashintha/rab-grid-angular.git"
+  },
+  "keywords": [
+    "grid",
+    "bootstrap",
+    "angular"
+  ],
+  "author": "Rashintha Maduneth",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/rashintha/rab-grid-angular/issues"
+  },
+  "homepage": "https://github.com/rashintha/rab-grid-angular#readme",
   "peerDependencies": {
     "@angular/common": "^12.2.0",
     "@angular/core": "^12.2.0"

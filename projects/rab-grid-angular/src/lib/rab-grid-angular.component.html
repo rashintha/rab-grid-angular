@@ -1,1 +1,328 @@
-<p>Hello!</p>
+<div *ngIf="getConfig(RABGridConf.DataEdit) || getConfig(RABGridConf.RowAdd) || getConfig(RABGridConf.DataExportEnable)" class="row d-print-none">
+  <div class="col-12 d-flex px-4 text-end justify-content-end">
+    <button *ngIf="!addNewRow && !editingAll && getConfig(RABGridConf.RowAdd)" (click)="addNew($event)"
+      class="btn btn-sm btn-light rabgrid-add-new">
+      <fa-icon [icon]="['fas', 'plus']" class="grid-color"></fa-icon> Add New
+    </button>
+        
+    <div class="c-dialog max-exceed-notice" *ngIf="maxLengthMessageShow" [style.left]="maximumReachedLeft" [style.top]="maximumReachedTop">
+      <div class="c-dialog-bubble py-2 px-4" [class.single]="!getConfig(RABGridConf.RowEdit)">
+        <div>{{getConfig(RABGridConf.DataMaxRowCountExceedMessage)}}</div>
+        <div class="pt-1 text-center">
+          <button (click)="dataExceedOk()" class="btn btn-sm btn-danger">OK</button>
+        </div>
+      </div>
+    </div>
+    <button *ngIf="!addNewRow && !editingAll && getConfig(RABGridConf.DataEdit)" (click)="editAll()"
+      class="btn btn-sm btn-light ms-1 rabgrid-edit-all">
+      <fa-icon [icon]="['fas', 'pencil-alt']" class="grid-color"></fa-icon> Edit All
+    </button>
+
+    <button *ngIf="editingAll" (click)="saveAll()" class="btn btn-sm btn-light rabgrid-save-all">
+      <fa-icon [icon]="['fas', 'save']" class="grid-color"></fa-icon> Save All
+    </button>
+    <button *ngIf="editingAll" (click)="cancelAll()" class="btn btn-sm btn-light ms-1 rabgrid-cancel-all">
+      <fa-icon [icon]="['fas', 'ban']" class="grid-color"></fa-icon> Cancel
+    </button>
+
+    <button *ngIf="addNewRow" (click)="saveNew()" class="btn btn-sm btn-light rabgrid-save-new">
+      <fa-icon [icon]="['fas', 'save']" class="grid-color"></fa-icon> Save
+    </button>
+    <button *ngIf="addNewRow" (click)="cancelNew()" class="btn btn-sm btn-light ms-1 rabgrid-cancel-new">
+      <fa-icon [icon]="['fas','ban']" class="grid-color"></fa-icon> Cancel
+    </button>
+
+    <div *ngIf="getConfig(RABGridConf.DataExportEnable) && !editingAll && !addNewRow" class="btn-group dropdown ms-4">
+      <button id="btnGroupDrop1" type="button" class="btn btn-sm btn-light dropdown-toggle rabgrid-export" data-bs-toggle="dropdown" 
+        aria-expanded="false">
+        
+        <fa-icon [icon]="['fas', 'download']" class="grid-color"></fa-icon> Export As
+      </button>
+      <div class="dropdown-menu dropdown-menu-primary rabgrid-dropdown" aria-labelledby="btnGroupDrop1">
+        <a (click)="exportTo(type)" *ngFor="let type of getConfig(RABGridConf.DataExportTypes)" class="dropdown-item cursor-pointer">
+          <i *ngIf="type.icon" [class]="type.icon"></i> {{type.name}}
+        </a>
+      </div>
+    </div>
+
+    <button *ngIf="!addNewRow && !editingAll && getConfig(RABGridConf.Delete)" (click)="deleteTable()"
+      class="btn btn-sm btn-light ms-1 rabgrid-delete-table">
+      <fa-icon [icon]="['fas', 'trash-alt']" class="grid-color"></fa-icon> Delete Table
+    </button>
+    </div>
+</div>
+
+<div id="rabgrid-download-container" class="mx-auto" *ngIf="downloadMode">
+  <div *ngFor="let page of printData; let j = index" class="A4" [class.pt-5]="j != 0" [class.mt-5]="j != 0">
+    <table class="table" [class.table-striped]="getConfig(RABGridConf.Striped)">
+      <thead>
+        <tr *ngIf="getConfig(RABGridConf.HeaderOrder)">
+          <th *ngFor="let head of getConfig(RABGridConf.HeaderOrder)"
+            [style.min-width]="getConfig(RABGridConf.ColumnMinWidth, head)"
+            [style.white-space]="getConfig(RABGridConf.ColumnHeaderWhiteSpace, head)"
+            [class.text-end]="getConfig(RABGridConf.ColumnAlign, head) == 'right'"
+            [class.text-left]="getConfig(RABGridConf.ColumnAlign, head) == 'left'"
+            [class.text-center]="getConfig(RABGridConf.ColumnAlign, head) == 'center'">
+                      
+            <span *ngIf="!getConfig(RABGridConf.ColumnSort, head)">
+              <span>{{getConfig(RABGridConf.ColumnName, head)}}</span>
+            </span>
+            <a class="table-sort" *ngIf="getConfig(RABGridConf.ColumnSort, head)" (click)="sort(head)">
+              <span>{{getConfig(RABGridConf.ColumnName, head)}}</span>
+            </a>
+            <span *ngIf="sortBy == head">
+              <span *ngIf="sortDirection == 1">
+                 <i class="bi bi-caret-down-fill grid-color grid-color"></i>
+              </span>
+              <span *ngIf="sortDirection == 2">
+                 <i class="bi bi-caret-up-fill grid-color"></i>
+              </span>
+            </span>
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let row of page; let i = index">
+          <td *ngFor="let value of getConfig(RABGridConf.HeaderOrder)"
+            (click)="emitCellClick(row, value, row[value])"
+            [style.white-space]="getConfig(RABGridConf.ColumnBodyWhiteSpace, value)"
+            [class.text-end]="getConfig(RABGridConf.ColumnAlign, value) == 'right'"
+            [class.text-left]="getConfig(RABGridConf.ColumnAlign, value) == 'left'"
+            [class.text-center]="getConfig(RABGridConf.ColumnAlign, value) == 'center'">
+                        
+            <span
+              [class.bold]="getConfig(RABGridConf.ColumnBold, value) || (getConfig(RABGridConf.LastRowBold, value) && i == (getConfig(RABGridConf.PaginationEnable) ? pageData.length : data.length) - 1) || getConfig(RABGridConf.ColumnLinkEnable, value)"
+              [class.grid-links]="getConfig(RABGridConf.ColumnLinkEnable, value)"
+              (click)="getConfig(RABGridConf.ColumnLinkCallback, value)(row, getConfig(RABGridConf.Parent, value))">
+
+              {{displayValue(row[value], value)}}
+            </span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div [class.table-responsive]="getConfig(RABGridConf.Responsiveness)">
+  <table id="c-grid" class="table" [class.table-striped]="getConfig(RABGridConf.Striped)">
+    <thead>
+      <tr *ngIf="getConfig(RABGridConf.HeaderOrder)">
+        <th *ngFor="let head of getConfig(RABGridConf.HeaderOrder)"
+          [style.min-width]="getConfig(RABGridConf.ColumnMinWidth, head)"
+          [style.white-space]="getConfig(RABGridConf.ColumnHeaderWhiteSpace, head)"
+          [class.text-end]="getConfig(RABGridConf.ColumnAlign, head) == 'right'"
+          [class.text-left]="getConfig(RABGridConf.ColumnAlign, head) == 'left'"
+          [class.text-center]="getConfig(RABGridConf.ColumnAlign, head) == 'center'">
+
+          <span *ngIf="!getConfig(RABGridConf.ColumnSort, head)">
+            <span>{{getConfig(RABGridConf.ColumnName, head)}}</span>
+          </span>
+          <a class="table-sort" *ngIf="getConfig(RABGridConf.ColumnSort, head)" (click)="sort(head)">
+            <span>{{getConfig(RABGridConf.ColumnName, head)}}</span>
+          </a>
+          <span *ngIf="sortBy == head">
+            <span *ngIf="sortDirection == 1"> <i class="bi bi-caret-down-fill grid-color"></i></span>
+            <span *ngIf="sortDirection == 2"> <i class="bi bi-caret-up-fill grid-color"></i></span>
+          </span>
+        </th>
+        <th *ngIf="!downloadMode && (getConfig(RABGridConf.RowEdit) || getConfig(RABGridConf.RowDelete))" class="d-print-none"></th>
+      </tr>
+    </thead>
+    <tbody *ngIf="getConfig(RABGridConf.HeaderOrder)">
+      <tr *ngFor="let row of pageData; let i = index">
+        <td *ngFor="let value of getConfig(RABGridConf.HeaderOrder)"
+          (click)="emitCellClick(row, value, row[value])"
+          [style.white-space]="getConfig(RABGridConf.ColumnBodyWhiteSpace, value)"
+          [class.text-end]="getConfig(RABGridConf.ColumnAlign, value) == 'right'"
+          [class.text-left]="getConfig(RABGridConf.ColumnAlign, value) == 'left'"
+          [class.text-center]="getConfig(RABGridConf.ColumnAlign, value) == 'center'">
+
+          <span
+            *ngIf="(!editingAll && editingRow != row && !(addNewRow && i == 0)) || !getConfig(RABGridConf.ColumnEdit, value)"
+            [class.font-weight-bold]="getConfig(RABGridConf.ColumnBold, value) || (getConfig(RABGridConf.LastRowBold, value) && i == (getConfig(RABGridConf.PaginationEnable) ? pageData.length : data.length) - 1) || getConfig(RABGridConf.ColumnLinkEnable, value)"
+            [class.grid-links]="getConfig(RABGridConf.ColumnLinkEnable, value)"
+            (click)="getConfig(RABGridConf.ColumnLinkCallback, value)(row, getConfig(RABGridConf.Parent, value))">
+                        
+            {{displayValue(row ? row[getConfig(RABGridConf.ColumnDisplayColumn, value)] : null, value)}}
+          </span>
+
+          <div class="input-group has-validation"
+            *ngIf="(editingRow == row || editingAll || (addNewRow && i == 0)) && getConfig(RABGridConf.ColumnEdit, value)">
+            
+            <input class="form-control w-100" [class.is-invalid]="isValid(editingRows[i], value)" [(ngModel)]="editingRows[i][value]"
+              *ngIf="editingAll && getConfig(RABGridConf.ColumnInputType, value) !== 'dropdown'"
+              [type]="getConfig(RABGridConf.ColumnInputType, value)" (change)="emitColumnOnChange($event, value, editingRows[i][value])">
+            <input class="form-control w-100" [class.is-invalid]="isValid(newRow, value)" [(ngModel)]="newRow[value]"
+              *ngIf="(addNewRow && i == 0) && getConfig(RABGridConf.ColumnInputType, value) !== 'dropdown'"
+              [type]="getConfig(RABGridConf.ColumnInputType, value)" (change)="emitColumnOnChange($event, value, newRow[value])">
+            <input class="form-control w-100" [class.is-invalid]="isValid(editingRow, value)" [(ngModel)]="editingRow[value]"
+              *ngIf="!editingAll && !addNewRow && getConfig(RABGridConf.ColumnInputType, value) !== 'dropdown'"
+              [type]="getConfig(RABGridConf.ColumnInputType, value)" (change)="emitColumnOnChange($event, value, editingRow[value])">
+
+            <select class="form-select w-100" [class.is-invalid]="isValid(editingRows[i], value)" [(ngModel)]="editingRows[i][value]"
+              *ngIf="editingAll && getConfig(RABGridConf.ColumnInputType, value) === 'dropdown'"
+              (change)="emitColumnOnChange($event, value, editingRows[i][value])">
+              
+              <option *ngFor="let option of getConfig(RABGridConf.ColumnInputOptions, value); let i = index"
+                [ngValue]="getConfig(RABGridConf.ColumnInputOptionValue, value, i)">
+                
+                {{getConfig(RABGridConf.ColumnInputOptionName, value, i)}}
+              </option>
+            </select>
+            <select class="form-select w-100" [class.is-invalid]="isValid(newRow, value)" [(ngModel)]="newRow[value]"
+              *ngIf="(addNewRow && i == 0) && getConfig(RABGridConf.ColumnInputType, value) === 'dropdown'"
+              (change)="emitColumnOnChange($event, value, newRow[value])">
+                            
+              <option *ngFor="let option of getConfig(RABGridConf.ColumnInputOptions, value); let i = index"
+                [ngValue]="getConfig(RABGridConf.ColumnInputOptionValue, value, i)">
+                
+                {{getConfig(RABGridConf.ColumnInputOptionName, value, i)}}
+              </option>
+            </select>
+            <select class="form-select w-100" [class.is-invalid]="isValid(editingRow, value)" [(ngModel)]="editingRow[value]"
+              *ngIf="!editingAll && !addNewRow && getConfig(RABGridConf.ColumnInputType, value) === 'dropdown'"
+              (change)="emitColumnOnChange($event, value, editingRow[value])">
+                            
+              <option *ngFor="let option of getConfig(RABGridConf.ColumnInputOptions, value); let i = index"
+                [ngValue]="getConfig(RABGridConf.ColumnInputOptionValue, value, i)">
+                
+                {{getConfig(RABGridConf.ColumnInputOptionName, value, i)}}
+              </option>
+            </select>
+            <div id="validationServerUsernameFeedback" class="invalid-feedback">
+              This field cannot be empty.
+            </div>
+          </div>
+          <button *ngFor="let button of getConfig(RABGridConf.ColumnButtons, value)"
+            (click)="buttonClicked(button.id, row)" [class.hide]="addNewRow && i === 0 && button.hideOnNew" class="button-border ms-1">
+            
+            <i *ngIf="!button.icon" [class]="button.class"></i>
+            <fa-icon *ngIf="button.icon" [icon]="button.icon" [class]="button.class"></fa-icon>
+          </button>
+        </td>
+        <td class="text-center d-print-none" *ngIf="!downloadMode && (getConfig(RABGridConf.RowEdit) || getConfig(RABGridConf.RowDelete))" style="min-width: 100px">
+          <button *ngIf="editingRow !== row && getConfig(RABGridConf.RowEdit) && !(addNewRow && i === 0) && !editingAll && !addNewRow"
+            (click)="editRow(row)" class="button-border rabgrid-edit-row">
+            
+            <fa-icon [icon]="['fas', 'pencil-alt']" class="grid-color"></fa-icon>
+          </button>
+          <button *ngIf="editingRow !== row && getConfig(RABGridConf.RowDelete) && !(addNewRow && i === 0) && !editingAll && !addNewRow"
+            (click)="deleteRow($event, row)" class="button-border ms-1 rabgrid-delete-row">
+            
+            <fa-icon [icon]="['fas', 'trash-alt']" class="grid-color"></fa-icon>
+          </button>
+
+          <div class="c-dialog" *ngIf="deletingRow === row" [style.left]="deleteConfirmationLeft" [style.top]="deleteConfirmationTop">
+            <div class="c-dialog-bubble py-2 px-4"
+              [class.single]="!getConfig(RABGridConf.RowEdit)">
+                            
+              <div>Are you sure you want to delete?</div>
+              <div class="pt-1 text-end">
+                <button (click)="deleteYes()" class="btn btn-sm btn-danger">YES</button>
+                <button (click)="deleteNo()" class="btn btn-sm btn-default">NO</button>
+              </div>
+            </div>
+          </div>
+
+          <button *ngIf="editingRow == row" (click)="saveRow(row)" class="button-border">
+            <fa-icon [icon]="['fas', 'save']" class="grid-color rabgrid-save-row"></fa-icon>
+          </button>
+          <button *ngIf="editingRow == row" (click)="cancelEdit()" class="button-border ms-1 rabgrid-cancel-edit-row">
+            <fa-icon [icon]="['fas', 'ban']" class="grid-color"></fa-icon>
+          </button>
+        </td>
+      </tr>
+    </tbody>
+    <tbody *ngIf="!loading && !data.length">
+      <tr class="text-center">
+        <td [attr.colspan]="getConfig(RABGridConf.HeaderOrder).length">
+          No records available
+        </td>
+      </tr>
+    </tbody>
+    <tbody *ngIf="loading">
+      <tr class="text-center">
+        <td [attr.colspan]="getConfig(RABGridConf.HeaderOrder).length + ((getConfig(RABGridConf.RowEdit) || getConfig(RABGridConf.RowDelete)) ? 1 : 0)">
+          <div class="w-100">
+            <div class="mx-auto" style="width: fit-content;">
+              <div class="loading-spinner-eclipse">
+                <div class="loading">
+                  <div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </td>
+      </tr>
+    </tbody>
+    <tfoot *ngIf="getConfig(RABGridConf.FooterEnable)">
+      <tr *ngIf="getConfig(RABGridConf.HeaderOrder)">
+        <th *ngFor="let head of getConfig(RABGridConf.HeaderOrder)">{{head}}</th>
+      </tr>
+    </tfoot>
+  </table>
+  <div *ngIf="getConfig(RABGridConf.DataShowTotalRows) && getConfig(RABGridConf.PaginationEnable)" class="total">
+    <span>
+      Showing
+      <select [(ngModel)]="customPageSize" (change)="pageSizeChange()" class="form-select show-count">
+        <option value="0">ALL</option>
+        <option value="5">5</option>
+        <option value="10">10</option>
+        <option value="25">25</option>
+        <option value="50">50</option>
+        <option value="100">100</option>
+      </select> of
+      {{getConfig(RABGridConf.DataLength) ? getConfig(RABGridConf.DataLength) : data.length}} entries
+    </span>
+  </div>
+  <nav *ngIf="getConfig(RABGridConf.PaginationEnable)" aria-label="Page navigation">
+    <ul class="pagination justify-content-end">
+      <li class="page-item" [class.disabled]="page == 1 || editingAll">
+        <a class="page-link" aria-label="Previous" (click)="changePage(1)">
+          <span aria-hidden="true">««</span>
+          <span class="visually-hidden">Previous</span>
+        </a>
+      </li>
+
+      <li class="page-item" [class.disabled]="page == 1 || editingAll">
+        <a class="page-link" aria-label="Previous" (click)="changePage(page - 1)">
+          <span aria-hidden="true">«</span>
+          <span class="visually-hidden">Previous</span>
+        </a>
+      </li>
+
+      <li *ngFor="let number of pageNumbers;" class="page-item" [class.disabled]="editingAll"
+        [class.hidden]="(number > page + 2) || (number < page - 2)" [class.active]="page == number">
+        
+        <a class="page-link" (click)="changePage(number)">{{number}}</a>
+      </li>
+
+      <li class="page-item" [class.disabled]="page == pageNumbers.length || editingAll">
+        <a class="page-link" (click)="changePage(page + 1)" aria-label="Next">
+          <span aria-hidden="true">»</span>
+          <span class="visually-hidden">Next</span>
+        </a>
+      </li>
+
+      <li class="page-item" [class.disabled]="page == pageNumbers.length || editingAll">
+        <a class="page-link" (click)="changePage(pageNumbers.length)" aria-label="Next">
+          <span aria-hidden="true">»»</span>
+          <span class="visually-hidden">Next</span>
+        </a>
+      </li>
+    </ul>
+  </nav>
+</div>
+<div *ngIf="downloadMode" class="center-loader">
+  <div class="mx-auto spinner-container">
+    <div class="loading-spinner-eclipse">
+      <div class="loading">
+        <div></div>
+      </div>
+    </div>
+  </div>
+  <div class="mx-auto mt-4">
+    Please wait while downloading...
+  </div>
+</div>
