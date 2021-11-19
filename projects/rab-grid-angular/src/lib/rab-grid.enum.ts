@@ -1,4 +1,4 @@
-export enum CGridConf {
+export enum RABGridConf {
     Responsiveness,
     Striped,
     Parent,
